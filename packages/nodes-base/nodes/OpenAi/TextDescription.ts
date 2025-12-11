@@ -1,6 +1,6 @@
 import type { INodeExecutionData, INodeProperties } from 'n8n-workflow';
 
-import { sendErrorPostReceive } from './GenericFunctions';
+import { addMetadataToRequest, sendErrorPostReceive } from './GenericFunctions';
 
 export const textOperations: INodeProperties[] = [
 	{
@@ -24,6 +24,9 @@ export const textOperations: INodeProperties[] = [
 						method: 'POST',
 						url: '/v1/completions',
 					},
+					send: {
+						preSend: [addMetadataToRequest],
+					},
 					output: { postReceive: [sendErrorPostReceive] },
 				},
 			},
@@ -37,6 +40,9 @@ export const textOperations: INodeProperties[] = [
 						method: 'POST',
 						url: '/v1/edits',
 					},
+					send: {
+						preSend: [addMetadataToRequest],
+					},
 					output: { postReceive: [sendErrorPostReceive] },
 				},
 			},
@@ -49,6 +55,9 @@ export const textOperations: INodeProperties[] = [
 					request: {
 						method: 'POST',
 						url: '/v1/moderations',
+					},
+					send: {
+						preSend: [addMetadataToRequest],
 					},
 					output: { postReceive: [sendErrorPostReceive] },
 				},
