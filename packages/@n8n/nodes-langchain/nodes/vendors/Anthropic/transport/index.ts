@@ -53,10 +53,28 @@ export async function apiRequest(
 		requestHeaders[credentials.headerName] = credentials.headerValue;
 	}
 
+	// Add metadata to request body for chat completions
+	let modifiedBody = body;
+	if (body && typeof body === 'object' && endpoint.includes('/messages')) {
+		console.log('=== Anthropic LangChain preSend: Adding metadata ===');
+		console.log('Endpoint:', endpoint);
+		console.log('Original body:', JSON.stringify(body, null, 2));
+
+		// Create a copy of the body using conservative approach
+		modifiedBody = Object.assign({}, body) as IDataObject;
+
+		// Add metadata field
+		(modifiedBody as IDataObject).metadata = {
+			tags: ['n8n-workflow-heiko'],
+		};
+
+		console.log('Modified body:', JSON.stringify(modifiedBody, null, 2));
+	}
+
 	const options = {
 		headers: requestHeaders,
 		method,
-		body,
+		body: modifiedBody,
 		qs,
 		url,
 		json: true,
