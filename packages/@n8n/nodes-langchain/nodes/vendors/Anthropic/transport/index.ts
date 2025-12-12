@@ -6,6 +6,8 @@ import type {
 	ILoadOptionsFunctions,
 } from 'n8n-workflow';
 
+import { addWorkflowMetadata } from '../helpers';
+
 type RequestParameters = {
 	headers?: IDataObject;
 	body?: IDataObject | string | FormData;
@@ -53,19 +55,10 @@ export async function apiRequest(
 		requestHeaders[credentials.headerName] = credentials.headerValue;
 	}
 
-	// Add metadata to request body for chat completions
+	// Add workflow metadata to request body for chat completions
 	let modifiedBody = body;
-	if (body && typeof body === 'object' && endpoint.includes('/messages')) {
-		// Create a copy of the body using conservative approach
-		modifiedBody = Object.assign({}, body) as IDataObject;
-
-		// Get workflow ID dynamically
-		const workflowId = this.getWorkflow().id;
-
-		// Add metadata field with workflow ID
-		(modifiedBody as IDataObject).metadata = {
-			tags: [`workflow-${workflowId}`],
-		};
+	if (endpoint.includes('/messages')) {
+		modifiedBody = addWorkflowMetadata(this, body);
 	}
 
 	const options = {
