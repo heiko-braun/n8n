@@ -5,12 +5,7 @@
   "bin": {
     "n8n-node": "bin/n8n-node.mjs"
   },
-  "exports": {
-    "./eslint": {
-      "types": "./dist/configs/eslint.d.js",
-      "default": "./dist/configs/eslint.js"
-    }
-  },
+  "exports": {},
   "files": [
     "bin",
     "dist"

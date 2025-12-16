@@ -4,6 +4,9 @@ import type {
 	IHttpRequestMethods,
 	ILoadOptionsFunctions,
 } from 'n8n-workflow';
+
+import { addWorkflowMetadata } from '../helpers';
+
 type RequestParameters = {
 	headers?: IDataObject;
 	body?: IDataObject | string;
@@ -40,10 +43,16 @@ export async function apiRequest(
 		};
 	}
 
+	// Add workflow metadata to request body for chat completions and responses
+	let modifiedBody = body;
+	if (endpoint.includes('/chat/completions') || endpoint.includes('/responses')) {
+		modifiedBody = addWorkflowMetadata(this, body);
+	}
+
 	const options = {
 		headers,
 		method,
-		body,
+		body: modifiedBody,
 		qs,
 		uri,
 		json: true,
